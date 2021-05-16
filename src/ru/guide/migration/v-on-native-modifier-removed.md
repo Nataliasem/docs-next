@@ -16,8 +16,8 @@ badges:
 
 ```html
 <my-component
-  v-on:close="handleComponentEvent"
-  v-on:click.native="handleNativeClickEvent"
+  @close="handleComponentEvent"
+  @click.native="handleNativeClickEvent"
 />
 ```
 
@@ -25,16 +25,16 @@ badges:
 
 Модификатор `.native` для `v-on` был удалён. В то же время, [новая опция `emits`](emits-option.md) позволяет дочерним компонентам определять, какие события он может генерировать.
 
-Следовательно, Vue теперь добавит все слушатели событий, которые _не определены_ в качестве генерируемых дочерним компонентом в качестве нативных слушателей событий (кроме случаев, когда `inheritAttrs: false` была задана в опциях дочернего компонента).
+Следовательно, Vue теперь добавит все слушатели событий, которые _не были объявлены_ как генерируемые дочерним компонентом, в качестве нативных слушателей событий (кроме случаев, когда `inheritAttrs: false` была задана в опциях дочернего компонента).
 
 ```html
 <my-component
-  v-on:close="handleComponentEvent"
-  v-on:click="handleNativeClickEvent"
+  @close="handleComponentEvent"
+  @click="handleNativeClickEvent"
 />
 ```
 
-`MyComponent.vue`
+Содержимое `MyComponent.vue`:
 
 ```html
 <script>

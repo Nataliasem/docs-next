@@ -1,47 +1,47 @@
-# Server-Side Rendering Guide
+# Руководство по отрисовке на стороне сервера
 
-> This guide is currently under active development
+> Данное руководство находится в стадии активной разработки
 
-## What is Server-Side Rendering (SSR)?
+## Что такое серверный рендеринг (SSR)?
 
-Vue.js is a framework for building client-side applications. By default, Vue components produce and manipulate DOM in the browser as output. However, it is also possible to render the same components into HTML strings on the server, send them directly to the browser, and finally "hydrate" the static markup into a fully interactive application on the client.
+Vue.js — фреймворк для создания приложений, выполняемых на стороне клиента. По умолчанию компоненты Vue создают и манипулируют DOM в браузере. Однако, можно преобразовывать те же компоненты в HTML-строки на сервере, отправлять их в браузер, и наконец «гидратировать» статическую разметку в полностью интерактивное приложение.
 
-A server-rendered Vue.js application can also be considered "isomorphic" or "universal". This means that the majority of your app's code runs on both the server **and** the client.
+Приложение Vue.js с отрисовкой на стороне сервера также можно считать «изоморфным» или «универсальным». Это означает, что большая часть кода приложения **выполняется и на стороне сервера и на стороне клиента**.
 
-## Why SSR?
+## Нужен ли SSR?
 
-Compared to a traditional SPA (Single-Page Application), the advantage of SSR primarily lies in:
+Сравнивая с традиционным приложением SPA (Single-Page Application), преимуществами отрисовки на стороне сервера будут:
 
-- Better search engine optimization (SEO), as the search engine crawlers will directly see the fully rendered page.
+- Лучшая поисковая оптимизация (SEO), потому что поисковые роботы смогут видеть полностью отрисованную страницу.
 
-  Note that as of now, Google and Bing can index synchronous JavaScript applications just fine. Synchronous being the key word there. If your app starts with a loading spinner, then fetches content via API call, the crawler will not wait for you to finish. This means if you have content fetched asynchronously on pages where SEO is important, SSR might be necessary.
+  Обратите внимание, на данный момент Google и Bing могут без проблем индексировать синхронные приложения JavaScript. Ключевое слово здесь — синхронные. Если запуск приложения сопровождается индикатором загрузки, чтобы получить данные через запрос к API, то поисковый робот просто не станет дожидаться окончания загрузки. Это означает, что для страниц где важен SEO и присутствует контент, получаемый асинхронно, отрисовка на стороне сервера необходима.
 
-- Faster time-to-content, especially on the slow Internet connection or slow devices. Server-rendered markup doesn't need to wait until all JavaScript has been downloaded and executed to be displayed, so your user will see a fully-rendered page sooner. This generally results in better user experience, and can be critical for applications where time-to-content is directly associated with the conversion rate.
+- Лучшие тайминги отображения контента (TTI, time-to-content), особенно при медленном интернет-соединении или на медленных устройствах. Для разметки, отрисованной на стороне сервере, не нужно дожидаться пока весь JavaScript загрузится и выполнится, поэтому пользователь быстрее увидит полностью отрисованную страницу. Это приводит к улучшению пользовательского опыта и может иметь решающее значение для приложений, в которых TTI напрямую связано с коэффициентом конверсии.
 
-There are also some trade-offs to consider when using SSR:
+Есть некоторые компромиссы, которые также необходимо учитывать при использовании отрисовки на стороне сервера:
 
-- Development constraints. Browser-specific code can only be used inside certain lifecycle hooks; some external libraries may need special treatment to be able to run in a server-rendered app.
+- Ограничения при разработке. Код, специфичный для браузера, можно использовать лишь в определённых хуках жизненного цикла; некоторым внешним библиотекам потребуется особый подход для запуска в приложении с отрисовкой на стороне сервера.
 
-- More involved build setup and deployment requirements. Unlike a fully static SPA that can be deployed on any static file server, a server-rendered app requires an environment where a Node.js server can run.
+- Более сложные требования к настройке и развёртыванию сборки. В отличие от полностью статичного SPA, которое можно опубликовать на любом статичном файловом сервере, для приложения с отрисовкой на стороне сервера требуется окружение, где сможет работать сервер Node.js.
 
-- More server-side load. Rendering a full app in Node.js is going to be more CPU-intensive than just serving static files, so if you expect high traffic, be prepared for corresponding server load and wisely employ caching strategies.
+- Повышенная нагрузка на сервер. Рендеринг полноценного приложения в Node.js будет более требовательным к процессору, нежели простая раздача статичных файлов, поэтому если ожидаете большой трафик, то будьте готовы к соответствующей нагрузке на сервер и применяйте стратегии кэширования.
 
-Before using SSR for your application, the first question you should ask is whether you actually need it. It mostly depends on how important time-to-content is for your application. For example, if you are building an internal dashboard where an extra few hundred milliseconds on the initial load doesn't matter that much, SSR would be overkill. However, in cases where time-to-content is absolutely critical, SSR can help you achieve the best possible initial load performance.
+Прежде чем использовать отрисовку на стороне сервера для приложения, первый вопрос, который нужно задать себе, это действительно ли он так нужен. Например, при разработке панели мониторинга для внутренних нужд, где не так важны лишние несколько сотен миллисекунд начальной загрузки, отрисовка на стороне сервера будет излишеством. Однако, в случаях, когда время до контента абсолютно критично, отрисовка на стороне сервера позволит достичь наилучшей производительности начальной загрузки.
 
-## SSR vs Prerendering
+## SSR vs Пререндеринг
 
-If you're only investigating SSR to improve the SEO of a handful of marketing pages (e.g. `/`, `/about`, `/contact`, etc), then you probably want **prerendering** instead. Rather than using a web server to compile HTML on-the-fly, prerendering generates static HTML files for specific routes at build time. The advantage is setting up prerendering is much simpler and allows you to keep your frontend as a fully static site.
+Если интересуетесь отрисовкой на стороне сервера только для улучшения SEO на паре маркетинговых страниц (например, `/`, `/about`, `/contact`, и т.д.), то наверняка лучше использовать **пререндеринг**. Вместо того, чтобы использовать веб-сервер для компиляции HTML на лету, пререндеринг просто сгенерирует статичные HTML-файлы для определённых путей на этапе сборки. Преимущество в том, что его настройка намного проще и позволяет сохранить фронтенд как полностью статический сайт.
 
-If you're using [webpack](https://webpack.js.org/), you can add prerendering with the [prerender-spa-plugin](https://github.com/chrisvfritz/prerender-spa-plugin). It's been extensively tested with Vue apps.
+При использовании [webpack](https://webpack.js.org/), пререндеринг можно добавить с помощью [prerender-spa-plugin](https://github.com/chrisvfritz/prerender-spa-plugin). Он был тщательным образом протестирован на приложениях Vue.
 
-## About This Guide
+## Об этом руководстве
 
-[//]: # 'TODO: This guide is focused on server-rendered Single-Page Applications using Node.js as the server. Mixing Vue SSR with other backend setups is a topic of its own and briefly discussed in a [dedicated section].'
+<!-- [//]: # 'TODO: This guide is focused on server-rendered Single-Page Applications using Node.js as the server. Mixing Vue SSR with other backend setups is a topic of its own and briefly discussed in a [dedicated section].' -->
 
-This guide will be very in-depth and assumes you are already familiar with Vue.js itself, and have a decent working knowledge of Node.js and webpack.
+Это руководство будет очень подробным и предполагает знакомство как с самим Vue.js, так и достаточные знания по Node.js и webpack.
 
-[//]: # 'If you prefer a higher-level solution that provides a smooth out-of-the-box experience, you should probably give [Nuxt.js](https://nuxtjs.org/) a try. It's built upon the same Vue stack but abstracts away a lot of the boilerplate, and provides some extra features such as static site generation. However, it may not suit your use case if you need more direct control of your app's structure. Regardless, it would still be beneficial to read through this guide to understand better how things work together.'
+<!-- [//]: # 'If you prefer a higher-level solution that provides a smooth out-of-the-box experience, you should probably give [Nuxt.js](https://nuxtjs.org/) a try. It's built upon the same Vue stack but abstracts away a lot of the boilerplate, and provides some extra features such as static site generation. However, it may not suit your use case if you need more direct control of your app's structure. Regardless, it would still be beneficial to read through this guide to understand better how things work together.' -->
 
-[//]: # 'TODO: As you read along, it would be helpful to refer to the official [HackerNews Demo](https://github.com/vuejs/vue-hackernews-2.0/), which makes use of most of the techniques covered in this guide'
+<!-- [//]: # 'TODO: As you read along, it would be helpful to refer to the official [HackerNews Demo](https://github.com/vuejs/vue-hackernews-2.0/), which makes use of most of the techniques covered in this guide' -->
 
-Finally, note that the solutions in this guide are not definitive - we've found them to be working well for us, but that doesn't mean they cannot be improved. They might get revised in the future - and feel free to contribute by submitting pull requests!
+Наконец, стоит запомнить, что решения в этом руководстве не являются окончательными — они хорошо работают, но это не значит, что их нельзя улучшить. А в будущем они могут быть пересмотрены — не стесняйтесь вносить свой вклад, предлагая пулл-реквесты с исправлениями!

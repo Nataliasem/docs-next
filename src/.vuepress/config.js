@@ -1,3 +1,6 @@
+var formatDistanceToNow = require('date-fns/formatDistanceToNow')
+var locales = require('date-fns/locale')
+
 const sidebar = {
   cookbook: [
     {
@@ -6,7 +9,8 @@ const sidebar = {
       children: [
         '/cookbook/',
         '/cookbook/editable-svg-icons',
-        '/cookbook/debugging-in-vscode'
+        '/cookbook/debugging-in-vscode',
+        '/cookbook/automatic-global-registration-of-base-components'
       ]
     }
   ],
@@ -242,7 +246,8 @@ const sidebarRU = {
       children: [
         '/ru/cookbook/',
         '/ru/cookbook/editable-svg-icons',
-        '/ru/cookbook/debugging-in-vscode'
+        '/ru/cookbook/debugging-in-vscode',
+        '/ru/cookbook/automatic-global-registration-of-base-components'
       ]
     }
   ],
@@ -477,7 +482,7 @@ module.exports = {
     //   title: 'Vue.js',
     //   description: 'Vue.js - The Progressive JavaScript Framework',
     // },
-    '/ru/': {
+    '/': {
       lang: 'ru',
       title: 'Vue.js',
       description: 'Vue.js - Прогрессивный JavaScript-фреймворк'
@@ -545,16 +550,17 @@ module.exports = {
   ],
   themeConfig: {
     logo: '/logo.png',
-    repo: 'vuejs/docs-next',
-    editLinks: false,
+    repo: 'translation-gang/docs-next',
+    editLinks: true,
     docsDir: 'src',
     sidebarDepth: 2,
     smoothScroll: false,
-    algolia: {
-      indexName: 'vuejs-v3',
-      appId: 'BH4D9OD16A',
-      apiKey: 'bc6e8acb44ed4179c30d0a45d6140d3f'
-    },
+    search: false, // TODO: ВРЕМЕННО ОТКЛЮЧЕН, так как ищет только по англ. доке
+    // algolia: {
+    //   indexName: 'vuejs-v3',
+    //   appId: 'BH4D9OD16A',
+    //   apiKey: 'bc6e8acb44ed4179c30d0a45d6140d3f'
+    // },
     carbonAds: {
       carbon: 'CEBDT27Y',
       custom: 'CKYD62QM',
@@ -697,11 +703,11 @@ module.exports = {
       //     '/examples/': sidebar.examples
       //   },
       // },
-      '/ru/': {
+      '/': {
         label: 'Русский',
         selectText: 'Переводы',
-        editLinkText: 'Изменить эту страницу на GitHub',
-        lastUpdated: 'Последнее обновление',
+        editLinkText: 'Исправьте эту страницу на GitHub',
+        lastUpdated: 'Последнее обновление страницы',
         nav: [
           {
             text: 'Документация',
@@ -798,12 +804,12 @@ module.exports = {
             text: 'Поддержать Vue',
             link: '/ru/support-vuejs/',
             items: [{
-                text: 'Единоразовые пожертвования',
-                link: '/support-vuejs/#one-time-donations'
+                text: 'Однократное пожертвование',
+                link: '/ru/support-vuejs/#однократное-пожертвование'
               },
               {
-                text: 'Повторяющиеся взносы',
-                link: '/support-vuejs/#recurring-pledges'
+                text: 'Регулярные пожертвования',
+                link: '/ru/support-vuejs/#регулярные-пожертвования'
               },
               {
                 text: 'Магазин футболок',
@@ -859,12 +865,7 @@ module.exports = {
         transformer(timestamp) {
           const date = new Date(timestamp)
 
-          const digits = [
-            date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(),
-            date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()
-          ].map(num => String(num).padStart(2, '0'))
-
-          return '{0}-{1}-{2}, {3}:{4}:{5} UTC'.replace(/{(\d)}/g, (_, num) => digits[num])
+          return formatDistanceToNow(date, { addSuffix: true, locale: locales.ru })
         }
       }
     ],
@@ -874,8 +875,12 @@ module.exports = {
         serviceWorker: true,
         updatePopup: {
           '/': {
-            message: 'New content is available.',
-            buttonText: 'Refresh'
+            message: 'Доступен новый контент.',
+            buttonText: 'Обновить'
+          },
+          '/ru/': {
+            message: 'Доступен новый контент.',
+            buttonText: 'Обновить'
           }
         }
       }

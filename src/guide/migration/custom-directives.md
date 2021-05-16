@@ -52,6 +52,7 @@ The final API is as follows:
 
 ```js
 const MyDirective = {
+  created() {}, // new
   beforeMount(el, binding, vnode, prevVnode) {},
   mounted() {},
   beforeUpdate() {}, // new
@@ -100,5 +101,5 @@ mounted(el, binding, vnode) {
 ```
 
 :::warning
-With [fragments](/guide/migration/fragments.html#overview) support, components can potentially have more than one root node. When applied to a multi-root component, a directive will be ignored and a warning will be logged.
+With [fragments](/guide/migration/fragments.html#overview) support, components can potentially have more than one root node. When applied to a multi-root component, a custom directive will be ignored and a warning will be logged.
 :::

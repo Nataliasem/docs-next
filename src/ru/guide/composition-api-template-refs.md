@@ -105,7 +105,7 @@ export default {
       const root = ref(null)
 
       watchEffect(() => {
-        // Этот эффект будет запущен перед обновлением DOM и, следовательно, 
+        // Этот эффект будет запущен перед обновлением DOM и, следовательно,
         // ссылка на элемент шаблона ещё не содержит ссылки на элемент.
         console.log(root.value) // => null
       })
@@ -134,7 +134,7 @@ export default {
 
       watchEffect(() => {
         console.log(root.value) // => <div></div>
-      }, 
+      },
       {
         flush: 'post'
       })

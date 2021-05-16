@@ -25,7 +25,7 @@ Vue.createApp({
 
 Результат:
 
-<common-codepen-snippet title="Обработка событий: основы" slug="xxGadPZ" tab="html,result" :preview="false" />
+<common-codepen-snippet title="Обработка событий: основы" slug="xxGadPZ" tab="result" :preview="false" />
 
 ## Обработчики событий
 
@@ -62,7 +62,7 @@ Vue.createApp({
 
 Результат:
 
-<common-codepen-snippet title="Обработка событий: использование метода" slug="jOPvmaX" tab="js,result" :preview="false" />
+<common-codepen-snippet title="Обработка событий: использование метода" slug="jOPvmaX" tab="result" :preview="false" />
 
 ## Методы в inline-обработчиках
 
@@ -87,7 +87,7 @@ Vue.createApp({
 
 Результат:
 
-<common-codepen-snippet title="Обработка событий: метод в инлайн-выражении" slug="WNvgjda" tab="html,result" :preview="false" />
+<common-codepen-snippet title="Обработка событий: метод в инлайн-выражении" slug="WNvgjda" tab="result" :preview="false" />
 
 Иногда может потребоваться доступ к оригинальному событию DOM в inline-обработчиках. В этом случае его можно передать в метод, используя специальную переменную `$event`:
 
@@ -170,7 +170,7 @@ methods: {
 ```
 
 :::tip Совет
-При использовании модификаторов имеет значение их порядок, потому что в той же очередности генерируется соответствующий код. Поэтому для `@click.prevent.self` будут предотвращаться **все клики**, в то время как для `@click.self.prevent` будут предотвращаться только клики на самом элементе.
+При использовании модификаторов имеет значение их порядок, потому что в той же очерёдности генерируется соответствующий код. Поэтому для `@click.prevent.self` будут предотвращаться **все клики**, в то время как для `@click.self.prevent` будут предотвращаться только клики на самом элементе.
 :::
 
 ```html
