@@ -83,6 +83,7 @@ const sidebar = {
       title: 'Advanced Guides',
       collapsable: false,
       children: [
+        '/guide/web-components',
         {
           title: 'Reactivity',
           children: [
@@ -109,7 +110,12 @@ const sidebar = {
     {
       title: 'Scaling Up',
       collapsable: false,
-      children: ['/guide/routing', '/guide/state-management', '/guide/ssr']
+      children: [
+        '/guide/routing',
+        '/guide/state-management',
+        '/guide/ssr',
+        '/guide/security'
+      ]
     },
     {
       title: 'Accessibility',
@@ -151,10 +157,33 @@ const sidebar = {
       children: [
         '/api/basic-reactivity',
         '/api/refs-api',
-        '/api/computed-watch-api'
+        '/api/computed-watch-api',
+        '/api/effect-scope',
       ]
     },
-    '/api/composition-api'
+    '/api/composition-api',
+    {
+      title: 'Single File Components',
+      collapsable: false,
+      children: [
+        {
+          title: 'Spec',
+          path: '/api/sfc-spec'
+        },
+        {
+          title: 'Tooling',
+          path: '/api/sfc-tooling'
+        },
+        {
+          title: '<script setup>',
+          path: '/api/sfc-script-setup'
+        },
+        {
+          title: '<style> Features',
+          path: '/api/sfc-style'
+        }
+      ]
+    }
   ],
   examples: [
     {
@@ -175,6 +204,7 @@ const sidebar = {
   ],
   migration: [
     '/guide/migration/introduction',
+    '/guide/migration/migration-build',
     {
       title: 'Details',
       collapsable: false,
@@ -205,6 +235,7 @@ const sidebar = {
         '/guide/migration/slots-unification',
         '/guide/migration/suspense',
         '/guide/migration/transition',
+        '/guide/migration/transition-as-root',
         '/guide/migration/transition-group',
         '/guide/migration/v-on-native-modifier-removed',
         '/guide/migration/v-model',
@@ -320,6 +351,7 @@ const sidebarRU = {
       title: 'Продвинутые руководства',
       collapsable: false,
       children: [
+        '/ru/guide/web-components',
         {
           title: 'Реактивность',
           children: [
@@ -346,7 +378,12 @@ const sidebarRU = {
     {
       title: 'Масштабирование',
       collapsable: false,
-      children: ['/ru/guide/routing', '/ru/guide/state-management', '/ru/guide/ssr']
+      children: [
+        '/ru/guide/routing',
+        '/ru/guide/state-management',
+        '/ru/guide/ssr',
+        '/ru/guide/security'
+      ]
     },
     {
       title: 'Доступность',
@@ -388,10 +425,33 @@ const sidebarRU = {
       children: [
         '/ru/api/basic-reactivity',
         '/ru/api/refs-api',
-        '/ru/api/computed-watch-api'
+        '/ru/api/computed-watch-api',
+        '/ru/api/effect-scope',
       ]
     },
-    '/ru/api/composition-api'
+    '/ru/api/composition-api',
+    {
+      title: 'Однофайловые компоненты',
+      collapsable: false,
+      children: [
+        {
+          title: 'Спецификация',
+          path: '/ru/api/sfc-spec'
+        },
+        {
+          title: 'Инструментарий',
+          path: '/ru/api/sfc-tooling'
+        },
+        {
+          title: '<script setup>',
+          path: '/ru/api/sfc-script-setup'
+        },
+        {
+          title: 'Возможности <style>',
+          path: '/ru/api/sfc-style'
+        }
+      ]
+    }
   ],
   examples: [
     {
@@ -412,6 +472,7 @@ const sidebarRU = {
   ],
   migration: [
     '/ru/guide/migration/introduction',
+    '/ru/guide/migration/migration-build',
     {
       title: 'Подробности',
       collapsable: false,
@@ -442,6 +503,7 @@ const sidebarRU = {
         '/ru/guide/migration/slots-unification',
         '/ru/guide/migration/suspense',
         '/ru/guide/migration/transition',
+        '/ru/guide/migration/transition-as-root',
         '/ru/guide/migration/transition-group',
         '/ru/guide/migration/v-on-native-modifier-removed',
         '/ru/guide/migration/v-model',
@@ -493,7 +555,7 @@ module.exports = {
       'link',
       {
         href:
-          'https://fonts.googleapis.com/css?family=Inter:300,400,500,600|Open+Sans:400,600;display=swap',
+        'https://fonts.googleapis.com/css?family=Inter:300,400,500,600|Open+Sans:400,600;display=swap',
         rel: 'stylesheet'
       }
     ],
@@ -515,6 +577,7 @@ module.exports = {
     ['link', { rel: 'manifest', href: '/manifest.json' }],
     ['meta', { name: 'theme-color', content: '#3eaf7c' }],
     ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
+    ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }],
     [
       'meta',
       { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }
@@ -555,6 +618,7 @@ module.exports = {
     docsDir: 'src',
     sidebarDepth: 2,
     smoothScroll: false,
+    topBanner: true,
     search: false, // TODO: ВРЕМЕННО ОТКЛЮЧЕН, так как ищет только по англ. доке
     // algolia: {
     //   indexName: 'vuejs-v3',
@@ -649,7 +713,7 @@ module.exports = {
       //             },
       //             {
       //               text: 'Devtools',
-      //               link: 'https://github.com/vuejs/vue-devtools'
+      //               link: 'https://devtools.vuejs.org'
       //             },
       //             {
       //               text: 'Weekly news',
@@ -786,7 +850,7 @@ module.exports = {
                   },
                   {
                     text: 'Devtools',
-                    link: 'https://github.com/vuejs/vue-devtools'
+                    link: 'https://devtools.vuejs.org'
                   },
                   {
                     text: 'Еженедельные новости',
@@ -823,19 +887,23 @@ module.exports = {
             items: [
               {
                 text: 'English',
-                link: 'https://v3.vuejs.org/'
+                link: 'https://v3.vuejs.org/',
+                isTranslation: true
               },
               {
                 text: '中文',
-                link: 'https://v3.cn.vuejs.org/'
+                link: 'https://v3.cn.vuejs.org/',
+                isTranslation: true
               },
               {
                 text: '한국어',
-                link: 'https://v3.ko.vuejs.org/'
+                link: 'https://v3.ko.vuejs.org/',
+                isTranslation: true
               },
               {
                 text: '日本語',
-                link: 'https://v3.ja.vuejs.org/'
+                link: 'https://v3.ja.vuejs.org/',
+                isTranslation: true
               },
               {
                 text: 'Другие переводы',

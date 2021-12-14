@@ -36,12 +36,16 @@ const app = createApp({})
 const app = createApp({
   data() {
     return {
-      ...
+      // ...
     }
   },
-  methods: {...},
-  computed: {...}
-  ...
+  methods: {
+    // ...
+  },
+  computed: {
+    // ...
+  }
+  // ...
 })
 ```
 
@@ -62,6 +66,8 @@ const app = createApp(
   {{ username }}
 </div>
 ```
+
+Корневые входные параметры — необработанные входные параметры, аналогичные тем, что передаются в [`h`](#h) для создания VNode. В дополнение к входным параметрам компонента, они могут включать атрибуты и слушатели событий, которые будут применяться к корневому компоненту.
 
 ### Типы
 
@@ -198,7 +204,7 @@ import { defineAsyncComponent } from 'vue'
 
 const AsyncComp = defineAsyncComponent({
   // Функция-фабрика
-  loader: () => import('./Foo.vue')
+  loader: () => import('./Foo.vue'),
   // Компонент загрузки, используемый во время загрузки асинхронного компонента
   loadingComponent: LoadingComponent,
   // Компонент ошибки, используемый в случае неудачи при загрузке
@@ -232,6 +238,44 @@ const AsyncComp = defineAsyncComponent({
 
 **См. также**: [Динамические и асинхронные компоненты](../guide/component-dynamic-async.md)
 
+## defineCustomElement <Badge text="3.2+" />
+
+Метод принимает такой же аргумент, что и [`defineComponent`](#definecomponent), но возвращает нативный [пользовательский элемент](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements), который может использоваться с любым фреймворком или без фреймворка вообще.
+
+Пример использования:
+
+```html
+<my-vue-element></my-vue-element>
+```
+
+```js
+import { defineCustomElement } from 'vue'
+
+const MyVueElement = defineCustomElement({
+  // обычные опции компонента Vue
+  props: {},
+  emits: {},
+  template: `...`,
+
+  // ТОЛЬКО ДЛЯ defineCustomElement: CSS, внедряемый в shadow root
+  styles: [`/* inlined css */`]
+})
+
+// Регистрация пользовательского элемента.
+// После регистрации все теги `<my-vue-element>` на странице будут обновлены.
+customElements.define('my-vue-element', MyVueElement)
+
+// Также есть возможность программно инстанцировать элемент:
+// (это может быть сделано только после регистрации)
+document.body.appendChild(
+  new MyVueElement({
+    // стартовые входные параметры (опционально)
+  })
+)
+```
+
+Более подробную информации о создании веб-компонентов с помощью Vue, в том числе при использовании однофайловых компонентов, смотрите в разделе [Vue и веб-компоненты](../guide/web-components.md#создание-пользовательских-элементов-с-помощью-vue).
+
 ## resolveComponent
 
 :::warning ВНИМАНИЕ
@@ -244,6 +288,7 @@ const AsyncComp = defineAsyncComponent({
 
 ```js
 const app = createApp({})
+
 app.component('MyComponent', {
   /* ... */
 })
@@ -251,6 +296,7 @@ app.component('MyComponent', {
 
 ```js
 import { resolveComponent } from 'vue'
+
 render() {
   const MyComponent = resolveComponent('MyComponent')
 }
@@ -280,6 +326,7 @@ render() {
 
 ```js
 import { resolveDynamicComponent } from 'vue'
+
 render () {
   const MyComponent = resolveDynamicComponent('MyComponent')
 }
@@ -309,11 +356,13 @@ render () {
 
 ```js
 const app = createApp({})
+
 app.directive('highlight', {})
 ```
 
 ```js
 import { resolveDirective } from 'vue'
+
 render () {
   const highlightDirective = resolveDirective('highlight')
 }
@@ -341,6 +390,7 @@ render () {
 
 ```js
 import { withDirectives, resolveDirective } from 'vue'
+
 const foo = resolveDirective('foo')
 const bar = resolveDirective('bar')
 
@@ -414,6 +464,7 @@ return withDirectives(h('div'), [
 
 ```ts
 import { createRenderer } from 'vue'
+
 const { render, createApp } = createRenderer<Node, Element>({
   patchProp,
   ...nodeOps
@@ -474,10 +525,13 @@ export default {
   inheritAttrs: false,
 
   render() {
-    const props = mergeProps({
-      // Класс будет объединён с любым другим классом из $attrs
-      class: 'active'
-    }, this.$attrs)
+    const props = mergeProps(
+      {
+        // Класс будет объединён с любым другим классом из $attrs
+        class: 'active'
+      },
+      this.$attrs
+    )
 
     return h('div', props)
   }
@@ -497,12 +551,17 @@ export default {
 import { h, useCssModule } from 'vue'
 
 export default {
-  setup () {
+  setup() {
     const style = useCssModule()
 
-    return () => h('div', {
-      class: style.success
-    }, 'Задача выполнена!')
+    return () =>
+      h(
+        'div',
+        {
+          class: style.success
+        },
+        'Задача выполнена!'
+      )
   }
 }
 </script>
@@ -514,7 +573,7 @@ export default {
 </style>
 ```
 
-Дополнительную информацию об использовании CSS-модулей можно изучить в разделе [Vue Loader — CSS модули](https://vue-loader.vuejs.org/ru/guide/css-modules.html).
+Дополнительную информацию об использовании CSS-модулей можно прочитать в разделе [Возможности стилей SFC: `<style module>`](sfc-style.md#style-module).
 
 ### Аргументы
 

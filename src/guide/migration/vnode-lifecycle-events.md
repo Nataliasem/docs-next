@@ -31,7 +31,7 @@ In Vue 3, the event name is prefixed with `vnode-`:
 </template>
 ```
 
-Or just `vnode` if you're using camel case:
+Or just `vnode` if you're using camelCase:
 
 ```html
 <template>
@@ -43,6 +43,8 @@ Or just `vnode` if you're using camel case:
 
 In most cases it should just require changing the prefix. The lifecycle hooks `beforeDestroy` and `destroyed` have been renamed to `beforeUnmount` and `unmounted` respectively, so the corresponding event names will also need to be updated.
 
-## See also
+[Migration build flags: `INSTANCE_EVENT_HOOKS`](migration-build.html#compat-configuration)
+
+## See Also
 
 - [Migration guide - Events API](/guide/migration/events-api.html)

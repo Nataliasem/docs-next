@@ -4,7 +4,7 @@
 
 ## Вычисляемые свойства
 
-Иногда требуется состояние, зависящее от другого состояния — во Vue это реализуется с помощью [вычисляемых свойств](computed.md#вычисляемые-своиства) компонента. Но можно создавать вычисляемые свойства и напрямую, с помощью метода `computed`. Он принимает функцию геттера и возвращает реактивный иммутабельный [ref](reactivity-fundamentals.md#создание-автономных-ссылок-на-реактивные-значения) объект для значения, возвращаемого из геттера.
+Иногда требуется состояние, зависящее от другого состояния — во Vue это реализуется с помощью [вычисляемых свойств](computed.md#вычисляемые-своиства) компонента. Но можно создавать вычисляемые свойства и напрямую, с помощью функции `computed`. Он принимает функцию геттера и возвращает реактивный иммутабельный [ref](reactivity-fundamentals.md#создание-автономных-ссылок-на-реактивные-значения) объект для значения, возвращаемого из геттера.
 
 ```js{2}
 const count = ref(1)
@@ -30,9 +30,39 @@ plusOne.value = 1
 console.log(count.value) // 0
 ```
 
+### Отладка вычисляемых свойств <Badge text="3.2+" />
+
+Для отладки `computed` принимает второй аргумент с опциями `onTrack` и `onTrigger`:
+
+- `onTrack` вызывается, когда реактивное свойство или ссылка отслеживается как зависимость.
+- `onTrigger` вызывается, когда коллбэк наблюдателя будет вызван изменением зависимости.
+
+Оба коллбэка получают debugger-событие с информацией о зависимости. Рекомендуется указывать в этих коллбэках оператор `debugger` для интерактивной проверки зависимости:
+
+```js
+const plusOne = computed(() => count.value + 1, {
+  onTrack(e) {
+    // срабатывает, когда count.value отслеживается как зависимость
+    debugger
+  },
+  onTrigger(e) {
+    // срабатывает при изменении значения count.value
+    debugger
+  }
+})
+
+// доступ к plusOne вызовет срабатывание onTrack
+console.log(plusOne.value)
+
+// изменение count.value вызовет срабатывание onTrigger
+count.value++
+```
+
+Обратите внимание, что `onTrack` и `onTrigger` работают только в режиме разработки.
+
 ## `watchEffect`
 
-Чтобы применить и _автоматически применить повторно_ побочный эффект, который основан на реактивном состоянии, можно использовать метод `watchEffect`. Он запускает функцию немедленно при отслеживании своих зависимостей и будет повторно запускать её при изменении одной из зависимостей.
+Чтобы применить и _автоматически применить повторно_ побочный эффект, который основан на реактивном состоянии, можно использовать функцию `watchEffect`. Он запускает функцию немедленно при отслеживании своих зависимостей и будет повторно запускать её при изменении одной из зависимостей.
 
 ```js
 const count = ref(0)
@@ -85,8 +115,10 @@ watchEffect(onInvalidate => {
 ```js
 const data = ref(null)
 
-watchEffect(async (onInvalidate) => {
-  onInvalidate(() => { /* ... */ }) // регистрируем функцию перед разрешением Promise
+watchEffect(async onInvalidate => {
+  onInvalidate(() => {
+    /* ... */
+  }) // регистрируем функцию перед разрешением Promise
   data.value = await fetchData(props.id)
 })
 ```
@@ -97,25 +129,25 @@ watchEffect(async (onInvalidate) => {
 
 Система реактивности Vue буферизирует аннулированные эффекты и выполняет их очистку асинхронно. Это сделано для избежания повторяющихся вызовов, когда в одном «тике» происходит много изменений состояния. Внутренняя функция компонента `update` также является эффектом. При добавлении пользовательского эффекта в очередь, по умолчанию он будет вызываться **перед** всеми эффектами `update` компонента:
 
-```html
+```vue
 <template>
   <div>{{ count }}</div>
 </template>
 
 <script>
-  export default {
-    setup() {
-      const count = ref(0)
+export default {
+  setup() {
+    const count = ref(0)
 
-      watchEffect(() => {
-        console.log(count.value)
-      })
+    watchEffect(() => {
+      console.log(count.value)
+    })
 
-      return {
-        count
-      }
+    return {
+      count
     }
   }
+}
 </script>
 ```
 
@@ -142,6 +174,8 @@ watchEffect(
 ```
 
 Опция `flush` также может принимать значение `'sync'`, которое принудительно заставит эффект всегда срабатывать синхронно. Однако такое поведение неэффективно и должно использоваться в крайних случаях.
+
+С версии Vue >= 3.2.0, можно использовать псевдонимы `watchPostEffect` и `watchSyncEffect`, чтобы сделать код более понятным.
 
 ### Отладка наблюдателей
 
@@ -203,15 +237,48 @@ watch(count, (count, prevCount) => {
 Можно отслеживать также и несколько источников одновременно, используя синтаксис наблюдателя с массивом:
 
 ```js
-const firstName = ref('');
-const lastName = ref('');
+const firstName = ref('')
+const lastName = ref('')
 
 watch([firstName, lastName], (newValues, prevValues) => {
-  console.log(newValues, prevValues);
+  console.log(newValues, prevValues)
 })
 
-firstName.value = "John"; // выведет в консоль: ["John",""] ["", ""]
-lastName.value = "Smith"; // выведет в консоль: ["John", "Smith"] ["John", ""]
+firstName.value = 'John' // выведет в консоль: ["John", ""] ["", ""]
+lastName.value = 'Smith' // выведет в консоль: ["John", "Smith"] ["John", ""]
+```
+
+Однако, при одновременном изменении обоих наблюдаемых источников в одной и той же функции, наблюдатель будет вызван только один раз:
+
+```js{9-13}
+setup() {
+  const firstName = ref('')
+  const lastName = ref('')
+
+  watch([firstName, lastName], (newValues, prevValues) => {
+    console.log(newValues, prevValues)
+  })
+
+  const changeValues = () => {
+    firstName.value = 'John'
+    lastName.value = 'Smith'
+    // выведет в консоль: ["John", "Smith"] ["", ""]
+  }
+
+  return { changeValues }
+}
+```
+
+Обратите внимание, что при нескольких синхронных изменениях наблюдатель срабатывает только один раз.
+
+Можно форсировать срабатывание наблюдателя после каждого изменения, используя опцию `flush: 'sync'`, хотя её применение не рекомендуется. В качестве альтернативы можно воспользоваться [nextTick](../api/global-api.md#nexttick), чтобы дожидаться срабатывания наблюдателя перед внесением следующих изменений. Например:
+
+```js{1,3}
+const changeValues = async () => {
+  firstName.value = 'John' // выведет в консоль: ["John", ""] ["", ""]
+  await nextTick()
+  lastName.value = 'Smith' // выведет в консоль: ["John", "Smith"] ["John", ""]
+}
 ```
 
 ### Отслеживание реактивных объектов
@@ -224,8 +291,9 @@ const numbers = reactive([1, 2, 3, 4])
 watch(
   () => [...numbers],
   (numbers, prevNumbers) => {
-    console.log(numbers, prevNumbers);
-  })
+    console.log(numbers, prevNumbers)
+  }
+)
 
 numbers.push(5) // Выведет в консоль: [1,2,3,4,5] [1,2,3,4]
 ```
@@ -236,59 +304,48 @@ numbers.push(5) // Выведет в консоль: [1,2,3,4,5] [1,2,3,4]
 const state = reactive({
   id: 1,
   attributes: {
-    name: "",
-  },
-});
-
-watch(
-  () => state,
-  (state, prevState) => {
-    console.log(
-      "без опции deep ",
-      state.attributes.name,
-      prevState.attributes.name
-    );
+    name: '',
   }
-);
+})
 
 watch(
   () => state,
   (state, prevState) => {
-    console.log(
-      "с опцией deep ",
-      state.attributes.name,
-      prevState.attributes.name
-    );
+    console.log('без опции deep ', state.attributes.name, prevState.attributes.name)
+  }
+)
+
+watch(
+  () => state,
+  (state, prevState) => {
+    console.log('с опцией deep ', state.attributes.name, prevState.attributes.name)
   },
   { deep: true }
-);
+)
 
-state.attributes.name = "Alex"; // выведет в консоль: "с опцией deep " "Alex" "Alex"
+state.attributes.name = 'Alex' // выведет в консоль: "с опцией deep " "Alex" "Alex"
 ```
 
 Однако, при отслеживании реактивного объекта или массива будет всегда возвращаться одна ссылка на текущее значение этого объекта как для текущего, так и для предыдущего состояния. Для полноценного отслеживания глубоко вложенных объектов или массивов, может потребоваться создавать глубокую копию значений. Это можно сделать например с помощью утилиты [lodash.cloneDeep](https://lodash.com/docs/4.17.15#cloneDeep)
 
 ```js
-import _ from 'lodash';
+import _ from 'lodash'
 
 const state = reactive({
   id: 1,
   attributes: {
-    name: "",
-  },
-});
+    name: '',
+  }
+})
 
 watch(
   () => _.cloneDeep(state),
   (state, prevState) => {
-    console.log(
-      state.attributes.name,
-      prevState.attributes.name
-    );
+    console.log(state.attributes.name, prevState.attributes.name)
   }
-);
+)
 
-state.attributes.name = "Alex"; // Выведет в консоль: "Alex" ""
+state.attributes.name = 'Alex' // Выведет в консоль: "Alex" ""
 ```
 
 ### Общее поведение с `watchEffect`

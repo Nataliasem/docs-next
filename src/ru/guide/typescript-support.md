@@ -24,7 +24,7 @@
 
 Обратите внимание, требуется включать `strict: true` (или хотя бы `noImplicitThis: true`, который является частью флага `strict`), чтобы проверять `this` в методах компонента, иначе он всегда будет интерпретироваться как тип `any`.
 
-Подробнее можно изучить в [документации настроек компилятора TypeScript](https://www.typescriptlang.org/docs/handbook/compiler-options.html).
+Подробнее можно прочитать в [документации настроек компилятора TypeScript](https://www.typescriptlang.org/docs/handbook/compiler-options.html).
 
 ## Конфигурация Webpack
 
@@ -87,7 +87,7 @@ vue add typescript
 
 ### Поддержка в редакторах
 
-Для разработки приложений Vue на TypeScript настоятельно рекомендуем использовать [Visual Studio Code](https://code.visualstudio.com/), обеспечивающее отличную поддержку TypeScript из коробки. При использовании [однофайловых компонентов](single-file-component.md) (SFC) также установите [расширение Vetur](https://github.com/vuejs/vetur), которое добавит вывод типов TypeScript в них и множество других отличных возможностей.
+Для разработки приложений Vue на TypeScript настоятельно рекомендуем использовать [Visual Studio Code](https://code.visualstudio.com/), обеспечивающее отличную поддержку TypeScript из коробки. При использовании [однофайловых компонентов](single-file-component.md) (SFC) также установите [расширение Volar](https://github.com/johnsoncodehk/volar), которое добавит вывод типов TypeScript в них и множество других отличных возможностей.
 
 [WebStorm](https://www.jetbrains.com/webstorm/) также предоставляет встроенную поддержку как для TypeScript, так и для Vue.
 
@@ -117,7 +117,7 @@ export default defineComponent({
 
 ## Использование с Options API
 
-TypeScript умеет определять большинство типов без их явного определения. Например, если есть компонент со свойством `count`, то будет выведена ошибка при попытке вызывать строковый метод на этом свойстве:
+TypeScript умеет выводить большинство типов без их явного определения. Например, если есть компонент со свойством `count`, то будет выведена ошибка при попытке вызывать строковый метод на этом свойстве:
 
 ```ts
 const Component = defineComponent({
@@ -132,7 +132,7 @@ const Component = defineComponent({
 })
 ```
 
-Сложные типы или интерфейсы можно приводить с использованием [type assertion](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions):
+К сложным типам или интерфейсам можно приводить с использованием [type assertion](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions):
 
 ```ts
 interface Book {
@@ -147,7 +147,7 @@ const Component = defineComponent({
       book: {
         title: 'Руководство по Vue 3',
         author: 'Команда Vue',
-        year: 2020
+        year: 2021
       } as Book
     }
   }
@@ -158,7 +158,7 @@ const Component = defineComponent({
 
 Для добавления глобальных свойств, доступных в любом экземпляре компонента, Vue 3 предоставляет [объект `globalProperties`](../api/application-config.md#globalproperties). Например, для [плагина](plugins.md#создание-плагина) может потребоваться внедрить глобальный объект или функцию.
 
-```ts
+```ts{7,12}
 import axios from 'axios'
 import { createApp } from 'vue'
 
@@ -250,6 +250,7 @@ interface Book {
 const Component = defineComponent({
   props: {
     name: String,
+    id: [Number, String],
     success: { type: String },
     callback: {
       type: Function as PropType<() => void>
@@ -257,6 +258,9 @@ const Component = defineComponent({
     book: {
       type: Object as PropType<Book>,
       required: true
+    },
+    metadata: {
+      type: null // metadata будет с типом any
     }
   }
 })
@@ -426,7 +430,7 @@ import { defineComponent, ref } from 'vue'
 
 const Component = defineComponent({
   setup() {
-    const year = ref(2020)
+    const year = ref(2021)
 
     const result = year.value.split('') // => Property 'split' does not exist on type 'number'
   }
@@ -436,9 +440,9 @@ const Component = defineComponent({
 Иногда может потребоваться указать сложный тип для внутреннего значения ref-ссылки. Это можно сделать передав общий аргумент при вызове ссылки для переопределения вывода типа по умолчанию:
 
 ```ts
-const year = ref<string | number>('2020') // тип year: Ref<string | number>
+const year = ref<string | number>('2021') // тип year: Ref<string | number>
 
-year.value = 2020 // ОК!
+year.value = 2021 // ОК!
 ```
 
 :::tip Примечание
@@ -487,4 +491,37 @@ export default defineComponent({
     const result = doubleCount.value.split('') // => Property 'split' does not exist on type 'number'
   }
 })
+```
+
+### Типизация обработчиков событий
+
+Работая с нативными событиями DOM может быть полезным типизировать аргумент, передаваемый в обработчик события. Например:
+
+```vue
+<template>
+  <input type="text" @change="handleChange" />
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  setup() {
+    // `evt` будет с типом `any`
+    const handleChange = evt => {
+      console.log(evt.target.value) // TypeScript здесь выбросит ошибку
+    }
+
+    return { handleChange }
+  }
+})
+</script>
+```
+
+Как можно увидеть, без правильной типизации аргумента `evt`, TypeScript станет выбрасывать ошибку при попытке получить доступ к значению элемента `<input>`. Решением этой проблемы будет приведение к правильному типу `target` события:
+
+```ts
+const handleChange = (evt: Event) => {
+  console.log((evt.target as HTMLInputElement).value)
+}
 ```

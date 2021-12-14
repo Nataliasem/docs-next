@@ -86,7 +86,7 @@ Then the parent could listen to that event and update a local data property, if 
 <ChildComponent :title="pageTitle" @update:title="pageTitle = $event" />
 ```
 
-For convenience, we had a shorthand for this pattern with the .sync modifier:
+For convenience, we had a shorthand for this pattern with the `.sync` modifier:
 
 ```html
 <ChildComponent :title.sync="pageTitle" />
@@ -181,6 +181,11 @@ We recommend:
     }
   }
   ```
+
+[Migration build flags:](migration-build.html#compat-configuration)
+
+- `COMPONENT_V_MODEL`
+- `COMPILER_V_BIND_SYNC`
 
 ## Next Steps
 

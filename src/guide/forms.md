@@ -1,5 +1,7 @@
 # Form Input Bindings
 
+<VideoLesson href="https://vueschool.io/lessons/user-inputs-vue-devtools-in-vue-3?friend=vuejs" title="Learn how to handle form inputs on Vue School">Learn how to work with form inputs with a free Vue School lesson</VideoLesson>
+
 ## Basic Usage
 
 You can use the `v-model` directive to create two-way data bindings on form input, textarea, and select elements. It automatically picks the correct way to update the element based on the input type. Although a bit magical, `v-model` is essentially syntax sugar for updating data on user input events, plus special care for some edge cases.
@@ -267,10 +269,10 @@ By default, `v-model` syncs the input with the data after each `input` event (wi
 If you want user input to be automatically typecast as a number, you can add the `number` modifier to your `v-model` managed inputs:
 
 ```html
-<input v-model.number="age" type="number" />
+<input v-model.number="age" type="text" />
 ```
 
-This is often useful, because even with `type="number"`, the value of HTML input elements always returns a string. If the value cannot be parsed with `parseFloat()`, then the original value is returned.
+This is often useful when the input type is `text`. If the input type is `number`, Vue can automatically convert the raw string value to a number, and you don't need to add the `.number` modifier to `v-model`. If the value cannot be parsed with `parseFloat()`, then the original value is returned.
 
 ### `.trim`
 

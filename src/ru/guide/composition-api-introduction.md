@@ -10,7 +10,7 @@
 
 Создание компонентов Vue позволяет извлекать повторяющиеся части интерфейса, вместе со связанной функциональностью, в переиспользуемые части кода. Этот подход добавляет приложению достаточно много с точки зрения удобства обслуживания и гибкости. Однако, коллективный опыт показал, что этого всё ещё может быть недостаточно, если приложение становится действительно большим — когда счёт идёт на несколько сотен компонентов. Когда приходится работать с такими большими приложениями — возможность разделения и переиспользования кода становится крайне важна.
 
-Представим, что в приложении есть компонент, который отображает список репозиториев конкретного пользователя. Поверх него, нужно реализовать функциональность поиска и фильтрации. Компонент, управляющим подобным отображением, может выглядеть так:
+Представим, что в приложении есть компонент, который отображает список репозиториев конкретного пользователя. Поверх него, нужно реализовать функциональность поиска и фильтрации. Компонент, управляющий подобным отображением, может выглядеть так:
 
 ```js
 // src/components/UserRepositories.vue
@@ -55,7 +55,7 @@ export default {
 2. Поиск репозиториев с помощью строки `searchQuery`
 3. Фильтрация репозиториев с помощью объекта `filters`
 
-Организация логики в опцииях компонента (`data`, `computed`, `methods`, `watch`) отлично работает в большинстве случаев. Однако, чем больше становятся компоненты, тем больше разрастётся список **логических блоков**. Что может привести к появлению компонентов, которые сложно изучать и понимать, особенно для тех, кто не занимался их разработкой.
+Организация логики в опциях компонента (`data`, `computed`, `methods`, `watch`) отлично работает в большинстве случаев. Однако, чем больше становятся компоненты, тем больше разрастётся список **логических блоков**. Что может привести к появлению компонентов, которые сложно изучать и понимать, особенно для тех, кто не занимался их разработкой.
 
 ![Options API во Vue: Код сгруппированный по типу опции](/images/options-api.png)
 
@@ -76,7 +76,7 @@ export default {
 Новая опция компонента `setup` выполняется **перед созданием компонента**, сразу после разрешения входных параметров `props`, и служит точкой старта для Composition API.
 
 :::warning ВНИМАНИЕ
-Так как на этапе выполнения `setup` ещё не создан экземпляр компонента, то внутри опции `setup` не будет доступа к `this`. Это значит, что кроме входных параметров `props`, будет нельзя обратиться ни к каким свойствам, объявленным в компоненте, а именно — **локальному состоянию**, **вычисляемым свойствам** или **методам**.
+Внутри `setup` не получится использовать `this`, потому что он не будет ссылаться на экземпляр компонента. Потому что вызов `setup` будет происходить до разрешения свойств `data`, `computed` или `methods`, а значит они будут недоступны.
 :::
 
 Опция `setup` должна быть функцией, которая принимает аргументами `props` и `context` (о которых подробнее поговорим [дальше](composition-api-setup.md#аргументы)). Кроме того, всё что возвращается из функции `setup` будет доступно для остальных частей компонента (вычисляемых свойств, методов, хуков жизненного цикла и т.д.), а также в шаблоне компонента.
@@ -118,7 +118,7 @@ export default {
 import { fetchUserRepositories } from '@/api/repositories'
 
 // в компоненте
-setup (props) {
+setup(props) {
   let repositories = []
   const getUserRepositories = async () => {
     repositories = await fetchUserRepositories(props.user)
@@ -175,7 +175,7 @@ import { fetchUserRepositories } from '@/api/repositories'
 import { ref } from 'vue'
 
 // в компоненте
-setup (props) {
+setup(props) {
   const repositories = ref([])
   const getUserRepositories = async () => {
     repositories.value = await fetchUserRepositories(props.user)
@@ -203,7 +203,7 @@ export default {
       required: true
     }
   },
-  setup (props) {
+  setup(props) {
     const repositories = ref([])
     const getUserRepositories = async () => {
       repositories.value = await fetchUserRepositories(props.user)
@@ -254,7 +254,7 @@ import { fetchUserRepositories } from '@/api/repositories'
 import { ref, onMounted } from 'vue'
 
 // в компоненте
-setup (props) {
+setup(props) {
   const repositories = ref([])
   const getUserRepositories = async () => {
     repositories.value = await fetchUserRepositories(props.user)
@@ -319,8 +319,8 @@ import { fetchUserRepositories } from '@/api/repositories'
 import { ref, onMounted, watch, toRefs } from 'vue'
 
 // в компоненте
-setup (props) {
-  // `toRefs` создаёт реактивную ссылку для входного параметра `user`
+setup(props) {
+  // `toRefs` создаёт реактивную ссылку для входного параметра `user` из `props`
   const { user } = toRefs(props)
 
   const repositories = ref([])
@@ -370,7 +370,7 @@ import { fetchUserRepositories } from '@/api/repositories'
 import { ref, onMounted, watch, toRefs, computed } from 'vue'
 
 // в компоненте
-setup (props) {
+setup(props) {
   // `toRefs` создаёт реактивную ссылку для входного параметра `user`
   const { user } = toRefs(props)
 
@@ -463,7 +463,7 @@ export default {
       required: true
     }
   },
-  setup (props) {
+  setup(props) {
     const { user } = toRefs(props)
 
     const { repositories, getUserRepositories } = useUserRepositories(user)

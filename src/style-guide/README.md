@@ -1268,8 +1268,8 @@ This is the default order we recommend for component options. They're split into
 1. **Global Awareness** (requires knowledge beyond the component)
     - `name`
 
-2. **Template Modifiers** (changes the way templates are compiled)
-    - `delimiters`
+2. **Template Compiler Options** (changes the way templates are compiled)
+    - `compilerOptions`
 
 3. **Template Dependencies** (assets used in the template)
     - `components`
@@ -1284,6 +1284,7 @@ This is the default order we recommend for component options. They're split into
     - `inheritAttrs`
     - `props`
     - `emits`
+    - `expose`
 
 6. **Composition API** (the entry point for using the Composition API)
     - `setup`
@@ -1484,7 +1485,7 @@ Prefer class selectors over element selectors in `scoped` styles, because large 
 ::: details Detailed Explanation
 To scope styles, Vue adds a unique attribute to component elements, such as `data-v-f3f3eg9`. Then selectors are modified so that only matching elements with this attribute are selected (e.g. `button[data-v-f3f3eg9]`).
 
-The problem is that large numbers of [element-attribute selectors](http://stevesouders.com/efws/css-selectors/csscreate.php?n=1000&sel=a%5Bhref%5D&body=background%3A+%23CFD&ne=1000) (e.g. `button[data-v-f3f3eg9]`) will be considerably slower than [class-attribute selectors](http://stevesouders.com/efws/css-selectors/csscreate.php?n=1000&sel=.class%5Bhref%5D&body=background%3A+%23CFD&ne=1000) (e.g. `.btn-close[data-v-f3f3eg9]`), so class selectors should be preferred whenever possible.
+The problem is that large numbers of element-attribute selectors (e.g. `button[data-v-f3f3eg9]`) will be considerably slower than class-attribute selectors (e.g. `.btn-close[data-v-f3f3eg9]`), so class selectors should be preferred whenever possible.
 :::
 
 <div class="style-example style-example-bad">

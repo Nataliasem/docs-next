@@ -8,31 +8,50 @@
 
 ```js
 // router.js
-import { createRouter, createMemoryHistory, createWebHistory } from 'vue-router'
+import { createRouter } from 'vue-router'
 import MyUser from './components/MyUser.vue'
-
-const isServer = typeof window === 'undefined'
-
-const history = isServer ? createMemoryHistory() : createWebHistory()
 
 const routes = [{ path: '/user', component: MyUser }]
 
-export default function() {
-  return createRouter({ routes, history })
+export default function(history) {
+  return createRouter({
+    history,
+    routes
+  })
 }
 ```
 
-И обновить файл `app.js`, клиентскую и серверную точки входа:
+И обновляем клиентскую и серверную точки входа:
 
-```js{4,8,10,14}
-// app.js
+```js
+// entry-client.js
 import { createSSRApp } from 'vue'
+import { createWebHistory } from 'vue-router'
+import createRouter from './router.js'
 import App from './App.vue'
-import createRouter from './router'
 
-export default function(args) {
+// ...
+
+const app = createSSRApp(App)
+
+const router = createRouter(createWebHistory())
+
+app.use(router)
+
+// ...
+```
+
+```js
+// entry-server.js
+import { createSSRApp } from 'vue'
+// маршрутизатор для сервера использует другой режим history
+import { createMemoryHistory } from 'vue-router'
+import createRouter from './router.js'
+import App from './App.vue'
+
+export default function () {
   const app = createSSRApp(App)
-  const router = createRouter()
+  const router = createRouter(createMemoryHistory())
 
   app.use(router)
 
@@ -41,20 +60,6 @@ export default function(args) {
     router
   }
 }
-```
-
-```js{2}
-// entry-client.js
-const { app, router } = createApp({
-  /*...*/
-})
-```
-
-```js{2}
-// entry-server.js
-const { app, router } = createApp({
-  /*...*/
-})
 ```
 
 ## Разделение кода
@@ -80,11 +85,16 @@ const routes = [
 
 ```js{8,10}
 // entry-client.js
-import createApp from './app'
+import { createSSRApp } from 'vue'
+import { createWebHistory } from 'vue-router'
+import createRouter from './router.js'
+import App from './App.vue'
 
-const { app, router } = createApp({
-  /* ... */
-})
+const app = createSSRApp(App)
+
+const router = createRouter(createWebHistory())
+
+app.use(router)
 
 router.isReady().then(() => {
   app.mount('#app')
@@ -103,7 +113,7 @@ const createApp = require(appPath).default
 server.get('*', async (req, res) => {
   const { app, router } = createApp()
 
-  router.push(req.url)
+  await router.push(req.url)
   await router.isReady()
 
   const appContent = await renderToString(app)

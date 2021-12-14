@@ -6,10 +6,7 @@
 
 ## Подготовка
 
-Убедитесь что установлена VS Code и выбранный браузер, а также последняя версия расширения отладчика:
-
-- [Debugger для Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome)
-- [Debugger для Firefox](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-firefox-debug)
+Убедитесь что установлена VS Code и выбранный браузер.
 
 Разверните проект с помощью [vue-cli](https://github.com/vuejs/vue-cli), следуя инструкциям по установке в [руководстве Vue CLI](https://cli.vuejs.org/ru/). Перейдите в каталог новосозданного приложения и откройте VS Code.
 
@@ -41,7 +38,7 @@ module.exports = {
 
 Нажмите на значок отладки (слева, узкая боковая панель действий) чтобы открыть представление «Отладка», затем на значок шестерёнки (сверху), чтобы настроить файл launch.json, выберите **Chrome/Firefox: Launch** в качестве окружения. Замените содержимое сгенерированного `launch.json` указанной ниже конфигурацией:
 
-![Добавление конфигурации Chrome](/images/config_add.png)
+<div style="padding: 10px 25px 30px"><img src="/images/config_add.png" alt="Добавление конфигурации Chrome" style="width: 690px; border-radius: 3px; box-shadow: 0 10px 15px rgb(0 0 0 / 50%)"></div>
 
 ```json
 {
@@ -74,7 +71,7 @@ module.exports = {
 
 1. Добавьте точку останова, например в **src/components/HelloWorld.vue** на строке `90`.
 
-![Breakpoint Renderer](/images/breakpoint_set.png)
+<div style="padding: 10px 25px 30px"><img src="/images/breakpoint_set.png" alt="Добавление точки останова" style="width: 690px; border-radius: 3px; box-shadow: 0 10px 15px rgb(0 0 0 / 50%)"></div>
 
 2. Откройте консоль в корневом каталоге приложения и запустите его с помощью Vue CLI:
 
@@ -86,7 +83,7 @@ npm run serve
 
 4. Эта точка останова должна быть достигнута, когда новый экземпляр браузера откроет `http://localhost:8080`.
 
-![Breakpoint Hit](/images/breakpoint_hit.png)
+<div style="padding: 10px 25px 30px"><img src="/images/breakpoint_hit.png" alt="Достижение точки останова" style="width: 690px; border-radius: 3px; box-shadow: 0 10px 15px rgb(0 0 0 / 50%)"></div>
 
 ## Альтернативные варианты
 

@@ -86,7 +86,7 @@ Or, if you want to combine TypeScript with a [JSX `render` function](/guide/rend
 
 ### Editor Support
 
-For developing Vue applications with TypeScript, we strongly recommend using [Visual Studio Code](https://code.visualstudio.com/), which provides great out-of-the-box support for TypeScript. If you are using [single-file components](./single-file-component.html) (SFCs), get the awesome [Vetur extension](https://github.com/vuejs/vetur), which provides TypeScript inference inside SFCs and many other great features.
+For developing Vue applications with TypeScript, we strongly recommend using [Visual Studio Code](https://code.visualstudio.com/), which provides great out-of-the-box support for TypeScript. If you are using [single-file components](./single-file-component.html) (SFCs), get the awesome [Volar extension](https://github.com/johnsoncodehk/volar), which provides TypeScript inference inside SFCs and many other great features.
 
 [WebStorm](https://www.jetbrains.com/webstorm/) also provides out-of-the-box support for both TypeScript and Vue.
 
@@ -247,6 +247,7 @@ interface Book {
 const Component = defineComponent({
   props: {
     name: String,
+    id: [Number, String],
     success: { type: String },
     callback: {
       type: Function as PropType<() => void>
@@ -254,6 +255,9 @@ const Component = defineComponent({
     book: {
       type: Object as PropType<Book>,
       required: true
+    },
+    metadata: {
+      type: null // metadata is typed as any
     }
   }
 })
@@ -485,4 +489,37 @@ export default defineComponent({
     const result = doubleCount.value.split('') // => Property 'split' does not exist on type 'number'
   }
 })
+```
+
+### Typing Event Handlers
+
+When dealing with native DOM events, it might be useful to type the argument we pass to the handler correctly. Let's take a look at this example:
+
+```vue
+<template>
+  <input type="text" @change="handleChange" />
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  setup() {
+    // `evt` will be of type `any`
+    const handleChange = evt => {
+      console.log(evt.target.value) // TS will throw an error here
+    }
+
+    return { handleChange }
+  }
+})
+</script>
+```
+
+As you can see, without annotating the `evt` argument correctly, TypeScript will throw an error when we try to access the value of the `<input>` element. The solution is to cast the event target with a correct type:
+
+```ts
+const handleChange = (evt: Event) => {
+  console.log((evt.target as HTMLInputElement).value)
+}
 ```

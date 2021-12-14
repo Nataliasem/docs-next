@@ -2,7 +2,7 @@
 
 > This page assumes you've already read the [Components Basics](component-basics.md). Read that first if you are new to components.
 
-A component non-prop attribute is an attribute or event listener that is passed to a component, but does not have a corresponding property defined in [props](component-props) or [emits](component-custom-events.html#defining-custom-events). Common examples of this include `class`, `style`, and `id` attributes. You can access those attributes via `$attrs` property.
+A component non-prop attribute is an attribute or event listener that is passed to a component, but does not have a corresponding property defined in [props](component-props.html) or [emits](component-custom-events.html#defining-custom-events). Common examples of this include `class`, `style`, and `id` attributes. You can access those attributes via `$attrs` property.
 
 ## Attribute Inheritance
 
@@ -18,7 +18,7 @@ app.component('date-picker', {
 })
 ```
 
-In the event we need to define the status of the date-picker component via a `data-status` property, it will be applied to the root node (i.e., `div.date-picker`).
+In the event we need to define the status of the date-picker component via a `data-status` attribute, it will be applied to the root node (i.e., `div.date-picker`).
 
 ```html
 <!-- Date-picker component with a non-prop attribute -->

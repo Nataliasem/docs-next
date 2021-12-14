@@ -38,7 +38,7 @@ For example:
 </script>
 ```
 
-While this seems like a convenience, it requires a custom syntax that breaks the assumption of expressions inside of curly braces being "just JavaScript," which has both learning and implementation costs.
+While this seems like a convenience, it requires a custom syntax that breaks the assumption of expressions inside curly braces being "just JavaScript," which has both learning and implementation costs.
 
 ## 3.x Update
 
@@ -72,6 +72,11 @@ Using the example above, here is one example of how it could be implemented.
 ## Migration Strategy
 
 Instead of using filters, we recommend replacing them with computed properties or methods.
+
+[Migration build flags:](migration-build.html#compat-configuration)
+
+- `FILTERS`
+- `COMPILER_FILTERS`
 
 ### Global Filters
 

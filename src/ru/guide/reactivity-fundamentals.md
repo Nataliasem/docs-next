@@ -1,8 +1,10 @@
 # Основы реактивности
 
+> В разделе в примерах кода используется синтаксис [однофайловых компонентов](single-file-component.md)
+
 ## Объявление реактивного состояния
 
-Реактивное состояния из объекта JavaScript создаётся с помощью метода `reactive`:
+Реактивное состояние из объекта JavaScript создаётся с помощью метода `reactive`:
 
 ```js
 import { reactive } from 'vue'
@@ -74,7 +76,7 @@ console.log(count.value) // 1
 ```
 
 :::tip Совет
-Если к реальному экземпляру объекта доступ не требуется, то можно обернуть его в метод `reactive`:
+Если обращаться к реальному экземпляру объекта не потребуется, то можно обернуть его в метод `reactive`:
 
 ```js
 nested: reactive({
@@ -130,7 +132,7 @@ import { reactive } from 'vue'
 
 const book = reactive({
   author: 'Команда Vue',
-  year: '2020',
+  year: '2021',
   title: 'Руководство Vue 3',
   description: 'Вы его читаете прямо сейчас ;)',
   price: 'free'
@@ -146,7 +148,7 @@ import { reactive, toRefs } from 'vue'
 
 const book = reactive({
   author: 'Команда Vue',
-  year: '2020',
+  year: '2021',
   title: 'Руководство Vue 3',
   description: 'Вы его читаете прямо сейчас ;)',
   price: 'free'
